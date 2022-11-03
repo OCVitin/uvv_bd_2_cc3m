@@ -1,0 +1,37 @@
+/* Aqui temos a criação da tabela "alunos", logo em seguida a sequence para gerar o código,   */
+/* mais abaixo teremos o trigger para ativar a sequência sempre que o usuário fizer um insert */
+
+create table alunos (
+    cod        NUMBER(3) constraint alunos_cod_nn not null,
+    nome       VARCHAR2(50) constraint alunos_nome_nn not null,
+    finalizado VARCHAR2(1) default 'N' constraint alunos_finalizado_nn not null
+);
+    
+alter table alunos
+add constraint pk_alunos primary key (cod);
+
+alter table alunos
+add constraint alunos_finalizado_ck
+check (finalizado in ('S', 'N'));
+    
+create sequence seq_alunos
+    start with 1
+    increment by 1
+    maxvalue 999
+    minvalue 1
+    ;
+    
+INSERT INTO alunos(nome) VALUES (
+    'OCVitin'
+    );
+    
+select * from alunos;
+
+/* Abaixo temos o trigger "alunos_cod_seq" */
+
+CREATE OR REPLACE TRIGGER ALUNOS_COD_SEQ 
+BEFORE INSERT ON alunos
+FOR EACH ROW
+BEGIN
+    :new.cod := seq_alunos.NEXTVAL;
+END;
