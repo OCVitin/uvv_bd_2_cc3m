@@ -35,3 +35,48 @@ FOR EACH ROW
 BEGIN
     :new.cod := seq_alunos.NEXTVAL;
 END;
+
+/* Abaixo temos uma tabela com as informações dos possíveis usuários do nosso banco de dados: grupo de RH e o administrador */
+
+create table usuario (
+    username VARCHAR2(10) constraint usuario_username_nn not null,
+    permissao VARCHAR2(1) constraint usuario_permissao_nn not null
+    );
+    
+alter table usuario
+add constraint pk_usuario primary key (username);
+
+alter table usuario
+add constraint usuario_permissao_ck
+check (permissao in ('C', 'A'));
+
+insert into usuario values (
+    'ADMIN',
+    'A'
+    );
+    
+insert into usuario values (
+    'HR',
+    'C'
+    );
+    
+select * from usuario;
+
+/* Trigger para questão 4 */
+
+CREATE OR REPLACE TRIGGER PERMISSOES 
+BEFORE DELETE OR UPDATE ON alunos
+FOR EACH ROW
+DECLARE
+    v_permissao VARCHAR2(1);
+BEGIN
+    SELECT permissao
+    INTO v_permissao
+    FROM usuario
+    WHERE upper(username) = upper(user);
+    IF v_permissao = 'C' AND :old.finalizado = 'S' THEN
+        raise_application_error(-20000, 'Você não pode alterar os dados do usuário!');
+    ELSIF v_permissao = 'A' AND :old.finalizado = 'S' AND updating THEN
+        raise_application_error(-20000, 'Você não pode alterar os dados do usuário!');
+    END IF;
+END;
