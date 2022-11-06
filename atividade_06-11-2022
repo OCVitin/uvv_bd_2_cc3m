@@ -1,3 +1,16 @@
+/* Essa é a resposta da questão 5, veio para o começo para a ordem de execução do script.      */
+/* Aqui temos o código para a criação do usuário admin, que conseguirá fazer inserts e updates */
+
+CREATE USER "ADMIN" IDENTIFIED BY "123"  
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+
+ALTER USER "admin" QUOTA UNLIMITED ON "USERS";
+
+GRANT "DBA" TO "admin" ;
+GRANT "CONNECT" TO "admin" ;
+GRANT "RESOURCE" TO "admin" ;
+
 /* Aqui temos a criação da tabela "alunos", logo em seguida a sequence para gerar o código,   */
 /* mais abaixo teremos o trigger para ativar a sequência sempre que o usuário fizer um insert */
 
@@ -62,7 +75,8 @@ insert into usuario values (
     
 select * from usuario;
 
-/* Trigger para questão 4 */
+/* Trigger para questão 4, sobre proibir o usuário comum de alterar e deletar o cadastro do aluno se o campo finalizado for 'S', */
+/* assim como o usuário administrador não pode apagar, mas apenas alterar os dados do aluno caso o finalizado seja 'S'.          */
 
 CREATE OR REPLACE TRIGGER PERMISSOES 
 BEFORE DELETE OR UPDATE ON alunos
