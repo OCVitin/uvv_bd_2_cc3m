@@ -1,16 +1,3 @@
-/* Essa é a resposta da questão 5, veio para o começo para a ordem de execução do script.      */
-/* Aqui temos o código para a criação do usuário admin, que conseguirá fazer inserts e updates */
-
-CREATE USER "ADMIN" IDENTIFIED BY "123"  
-DEFAULT TABLESPACE "USERS"
-TEMPORARY TABLESPACE "TEMP";
-
-ALTER USER "admin" QUOTA UNLIMITED ON "USERS";
-
-GRANT "DBA" TO "admin" ;
-GRANT "CONNECT" TO "admin" ;
-GRANT "RESOURCE" TO "admin" ;
-
 /* Aqui temos a criação da tabela "alunos", logo em seguida a sequence para gerar o código,   */
 /* mais abaixo teremos o trigger para ativar a sequência sempre que o usuário fizer um insert */
 
@@ -49,7 +36,7 @@ BEGIN
     :new.cod := seq_alunos.NEXTVAL;
 END;
 
-/* Abaixo temos uma tabela com as informações dos possíveis usuários do nosso banco de dados: grupo de RH e o administrador */
+/* Abaixo temos uma tabela com as informações dos possíveis usuários do nosso banco de dados: grupo de RH e o administrador.    */
 
 create table usuario (
     username VARCHAR2(10) constraint usuario_username_nn not null,
@@ -94,3 +81,14 @@ BEGIN
         raise_application_error(-20000, 'Você não pode alterar os dados do usuário!');
     END IF;
 END;
+
+/* Essa é a resposta da questão 5, Aqui temos o código para a criação do usuário admin, que que conseguirá fazer inserts e        */
+/* updates.                                                                                                                       */
+
+CREATE USER "ADMIN" IDENTIFIED BY "123"  
+DEFAULT TABLESPACE "USERS"
+TEMPORARY TABLESPACE "TEMP";
+
+GRANT SELECT, UPDATE, INSERT, DELETE ON system.aluno to ADMIN;
+GRANT CREATE SESSION TO "ADMIN";
+CONNECT ADMIN/123@localhost:1521/xepdb1;
